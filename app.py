@@ -6,7 +6,7 @@ from flask import Flask, redirect, url_for, session,render_template,request
 app = Flask(__name__)
 @app.route('/<test_data>')
 def login(test_data):
-    if(len(test_data.split(" "))):
+    if(len(test_data.split(" "))<50):
         return jsonify({"output":999}
                        
     print(textstat.flesch_reading_ease(test_data),"\n",
