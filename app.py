@@ -20,7 +20,7 @@ def login(id):
     cursor.execute("SELECT * FROM upload WHERE id = %s", (str(id),))
     response = cursor.fetchall()
     
-    if(len(response[-1][-1].split(" "))<50):
+    if(len(response[-1][-1].split(" "))<5):
         return jsonify({"output":999})
        
     test_data = response[-1][-1]
