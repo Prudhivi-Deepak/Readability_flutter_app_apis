@@ -1,3 +1,7 @@
 textstat
 flask
-request
+gunicorn
+flask_mysqldb
+firebase_admin 
+werkzeug
+requests
