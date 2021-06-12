@@ -19,9 +19,11 @@ def login(id):
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT * FROM upload WHERE id = %s", (str(id),))
     response = cursor.fetchall()
-    
-    if(len(response[-1][-1].split(" "))<5):
-        return jsonify({"output":999})
+    try:
+        if(len(response[-1][-1].split(" "))<5):
+            return jsonify({"output":999})
+    except:
+        return jsonify({"output":000})
        
     test_data = response[-1][-1]
                        
