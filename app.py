@@ -3,6 +3,9 @@ import json
 from flask.json import jsonify
 from flask import Flask, redirect, url_for, session,render_template,request
 from flask_mysqldb import MySQL
+import os
+
+app = Flask(__name__)
 
 app.secret_key = os.urandom(24)
 app.config['MYSQL_HOST'] = 'remotemysql.com'
@@ -11,16 +14,14 @@ app.config['MYSQL_PASSWORD'] = '6reaeX1348'
 app.config['MYSQL_DB'] = 'iQnG3ACqz9'
 mysql = MySQL(app)
 
-app = Flask(__name__)
 @app.route('/<id>')
 def login(id):
-    
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM upload WHERE id = %s", (str(id1),))
+    cursor.execute("SELECT * FROM upload WHERE id = %s", (str(id),))
     response = cursor.fetchall()
     
     if(len(response[-1][-1].split(" "))<50):
-        return jsonify({"output":999}
+        return jsonify({"output":999})
        
     test_data = response[-1][-1]
                        
