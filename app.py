@@ -4,20 +4,11 @@ from flask.json import jsonify
 from flask import Flask, redirect, url_for, session,render_template,request
 
 app = Flask(__name__)
-@app.route('/')
-def login():
-    test_data = (
-        "Playing games has always been thought to be important to "
-        "the development of well-balanced and creative children; "
-        "however, what part, if any, they should play in the lives "
-        "of adults has never been researched that deeply. I believe "
-        "that playing games is every bit as important for adults "
-        "as for children. Not only is taking time out to play games "
-        "with our children and other adults valuable to building "
-        "interpersonal relationships but is also a wonderful way "
-        "to release built up tension."
-    )
-
+@app.route('/<test_data>')
+def login(test_data):
+    if(len(test_data.split(" "))):
+        return jsonify({"output":999}
+                       
     print(textstat.flesch_reading_ease(test_data),"\n",
     textstat.smog_index(test_data),"\n",
     textstat.flesch_kincaid_grade(test_data),"\n",
@@ -33,7 +24,8 @@ def login():
     textstat.gutierrez_polini(test_data),"\n",
     textstat.crawford(test_data))
 
-    return jsonify({
+    return jsonify({"output":
+        {
         "flesch_reading_ease":textstat.flesch_reading_ease(test_data),
         "smog_index":textstat.smog_index(test_data),
         "flesch_kincaid_grade":textstat.flesch_kincaid_grade(test_data),
@@ -48,7 +40,7 @@ def login():
         "szigriszt_pazos":textstat.szigriszt_pazos(test_data),
         "gutierrez_polini":textstat.gutierrez_polini(test_data),
         "crawford":textstat.crawford(test_data)
-    })
+    }})
 
 if __name__ == "__main__":
     app.run(debug=True)
