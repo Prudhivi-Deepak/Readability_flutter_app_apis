@@ -21,7 +21,7 @@ def login(id):
     response = cursor.fetchall()
     try:
         if(len(response[-1][-1].split(" "))<5):
-            return jsonify({"output":999})
+            pass
     except:
         return jsonify({"output":000})
        
