@@ -46,7 +46,7 @@ def login(id):
         {
             "id":response[-1][0],
             "email":response[-1][1],
-            "timne":response[-1][2],
+            "time":response[-1][2],
             "text_input":response[-1][3],
             "flesch_reading_ease":textstat.flesch_reading_ease(test_data),
             "smog_index":textstat.smog_index(test_data),
