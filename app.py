@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.config['MYSQL_HOST'] = 'remotemysql.com'
 app.config['MYSQL_USER'] = 'iQnG3ACqz9'
-app.config['MYSQL_PASSWORD'] = '6reaeX1348'
+app.config['MYSQL_PASSWORD'] = 'OQbU3JbFVB'
 app.config['MYSQL_DB'] = 'iQnG3ACqz9'
 mysql = MySQL(app)
 
