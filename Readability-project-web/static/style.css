@@ -1,0 +1,114 @@
+img{
+    height: 200px;
+}
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    height: 100vh;
+    width: 100%;
+    background-color: #e4e7eb;
+    /* rgb(89, 222, 255); */
+}
+h1{
+    text-align: center;
+}
+.profile-pic-div{
+    height: 200px;
+    width: 750px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    overflow: hidden;
+    border: 1px solid #04AA6D;
+    /* border: 1px solid green; */
+}
+
+#plot1{
+    height: 500px;
+    width: 500px;
+}
+#plot2{
+    margin-left: 30%;
+    height: 500px;
+    width: 500px;
+}
+#logo{
+    height: 100px;
+    width: 100px;
+}
+h3{
+    margin-left: 50px;
+    display: flex;
+    position: relative;
+}
+
+#photo{
+    margin: 10 0 3 3;
+    height: 150px;
+    width: 750px;
+    position: fixed;
+}
+
+#file{
+    display: none;
+}
+
+#b1{
+    margin-top: 400px;
+    margin-left:46%;
+}
+
+#b1:hover{
+    background-color: #027048;
+}
+
+#uploadBtn{
+    height: 40px;
+    width: 60px;
+    position: absolute;
+    bottom: 0;
+    transform: translateX(-50%);
+    text-align: center;
+    background-color: rgba(41, 255, 13, 0.7);
+    border-radius: 20%; 
+    color: black;
+    display: none;
+    font-size: 15px;
+    cursor: pointer;
+    margin-left: 350px;
+}
+
+.dropbtn {
+    border-radius: 8px;
+    background-color: #04AA6D;
+    color: white;
+    padding: 13px;
+    font-size: 16px;
+    border: 10px;
+  }
+  .dropdown {
+    position: relative;
+    display:inline-block;
+  }
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+  .dropdown-content a {
+    border-radius: 3px;
+    color: black;
+    padding: 10px ;
+    background-color: aqua;
+    display: block;
+  }
+  .dropdown-content a:hover {background-color: rgb(113, 181, 241);}
+  .dropdown:hover .dropdown-content {display: block;}
+  .dropdown:hover .dropbtn {background-color: #3e8e41;}

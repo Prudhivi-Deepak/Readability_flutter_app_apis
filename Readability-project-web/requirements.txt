@@ -1,0 +1,7 @@
+flask 
+sqlalchemy 
+requests
+gunicorn
+werkzeug
+authlib
+textstat

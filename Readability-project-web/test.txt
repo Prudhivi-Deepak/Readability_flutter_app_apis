@@ -1,0 +1,38 @@
+"id",   0
+"time",     1
+"email",    2
+"text_input",   3
+
+"text_standard",    0
+"automated_readability_index",  1
+"coleman_liau_index",   2
+"crawford",     3
+"dale_chall_readability_score",     4
+"difficult_words",  5
+"fernandez_huerta",     6
+"flesch_kincaid_grade",     7
+"flesch_reading_ease",  8
+"gunning_fog",  9
+"gutierrez_polini",     10
+"linsear_write_formula",    11
+"smog_index",           12
+"szigriszt_pazos"   13
+
+
+
+"flesch_reading_ease",      0
+"smog_index",       1
+"flesch_kincaid_grade",     2
+"coleman_liau_index",       3
+"automated_readability_index",      4
+"dale_chall_readability_score",     5
+"difficult_words",      6
+"linsear_write_formula",        7
+"gunning_fog",      8
+"text_standard",        9
+"fernandez_huerta",     10
+"szigriszt_pazos"       12
+"gutierrez_polini",     13
+"crawford"      14
+
+((1, '28/06/2021 11:18:47', '28_06_202111_18_47', '9919004227@klu.ac.in', 'This is the first sentence to test the web app', '0th and 1st grade', '1', '2.7', '-0.2', '0.5', '0', '130.7', '1.3', '103.63', '4', '55.81', '4', '0', '128.31'), (2, '28/06/2021 11:18:58', '28_06_202111_18_58', '9919004227@klu.ac.in', 'This is the second sentence to test the web app', '3rd and 4th grade', '1.5', '3.28', '0.4', '0.5', '0', '124.7', '2.5', '95.17', '4', '54.84', '4', '0', '122.08'), (3, '28/06/2021 11:19:07', '28_06_202111_19_07', '9919004227@klu.ac.in', 'This is the third sentence to test the web app', '0th and 1st grade', '1', '2.7', '-0.2', '0.5', '0', '130.7', '1.3', '103.63', '4', '55.81', '4', '0', '128.31'))

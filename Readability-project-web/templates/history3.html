@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script> 
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> 
+    <link href="/static/home.css" rel="stylesheet" >
+    <title>Document</title>
+</head>
+<body>
+    {%if flag!=1 %}
+        <div class="dropdown" >
+            <img src="/static/img/back.jpg" id="logo">
+            <div class="dropdown-content">
+            <a href="/">Home</a>
+            </div>
+        </div>
+    {%endif%}
+    {%if flag==1%}
+    <div class="dropdown" >
+        <img src="/static/img/back.jpg" id="logo">
+        <div class="dropdown-content">
+            <a style="text-decoration:none" href="/main1">Image</a>
+            <a style="text-decoration:none" href="/canvas">Digital</a>
+            <a style="text-decoration:none" href="/history">History</a>
+            <a style="text-decoration:none" href="/logout">Logout</a>
+        </div>
+    </div>
+    <!-- #id , email , input , output1 , output2 , info. -->
+            <br>
+            <form action="https://www.webfx.com/tools/read-able/automated-readability-index.html" class="inline">
+                <td><button class="dropbtn" id="button1" ><h4>Input Text : {{input}}</h4></button></td>
+            </form>
+            <br>
+            <table style="width:100%">
+                <tr>
+                    <td><button class="dropbtn"  id="button1" ><h4>text_standard : {{alldata[0]}}</h4></button></td>
+                    <form action="https://www.webfx.com/tools/read-able/automated-readability-index.html" class="inline">
+                        <td><button class="dropbtn" id="button1" ><h4>automated_readability_index : {{alldata[1]}}</h4></button></td>
+                    </form>
+                    <form action="https://www.webfx.com/tools/read-able/coleman-liau-index.html" class="inline">
+                        <td><button class="dropbtn"  id="button1" ><h4>coleman_liau_index : {{alldata[2]}}</h4></button></td>
+                    </form>
+                </tr>
+                <br>
+                <tr>
+                    <form action="https://legible.es/blog/formula-de-crawford/" class="inline">
+                        <td><button class="dropbtn" id="button1" ><h4>crawford : {{alldata[3]}}</h4></button></td>
+                    </form>
+                    <form action="https://en.wikipedia.org/wiki/Dale%E2%80%93Chall_readability_formula" class="inline">
+                        <td><button class="dropbtn" id="button1" ><h4>dale_chall_readability_score : {{alldata[4]}}</h4></button></td>
+                    </form>
+                    <td><button class="dropbtn" id="button1" ><h4>difficult_words : {{alldata[5]}}</h4></button></td>  
+                </tr>
+                <br>
+                <tr>
+                    <form action="https://linguistlist.org/issues/22/22-2332/" class="inline">
+                        <td><button class="dropbtn" id="button1" ><h4>fernandez_huerta : {{alldata[6]}}</h4></button></td>
+                    </form>
+                    <form action="https://www.webfx.com/tools/read-able/flesch-kincaid.html" class="inline">
+                        <td><button class="dropbtn" id="button1" ><h4>flesch_kincaid_grade : {{alldata[7]}}</h4></button></td>
+                    </form>
+                    <form action="https://readabilityformulas.com/flesch-reading-ease-readability-formula.php" class="inline">
+                        <td><button class="dropbtn" id="button1" ><h4>flesch_reading_ease : {{alldata[8]}}</h4></button></td>
+                    </form>     
+                </tr>
+                <br>
+                <tr>
+                    <form action="https://en.wikipedia.org/wiki/Gunning_fog_index" class="inline">
+                        <td><button class="dropbtn" id="button1" ><h4>gunning_fog : {{alldata[9]}}</h4></button></td>
+                    </form>
+                    <form action="https://en.wikipedia.org/wiki/Linsear_Write" class="inline">
+                        <td><button class="dropbtn" id="button1" ><h4>linsear_write_formula : {{alldata[11]}}</h4></button></td>
+                    </form>
+                    <form action="https://en.wikipedia.org/wiki/SMOG" class="inline">
+                        <td><button class="dropbtn" id="button1" ><h4>smog_index : {{alldata[12]}}</h4></button></td>
+                    </form>
+             
+                    <!-- <form action="/towards/szigriszt_pazos" class="inline">
+                        <td><button class="dropbtn" id="button1" ><h4>szigriszt_pazos : {{alldata[11]}}</h4></button></td>
+                    </form> -->
+                </tr>
+                <br>
+                <tr>
+                    <!-- <form action="/towards/gutierrez_polini" class="inline">
+                        <td><button class="dropbtn"  id="button1" ><h4>gutierrez_polini : {{alldata[12]}}</h4></button></td>
+                    </form> -->
+                    <!-- <form action="/towards/crawford" class="inline">
+                        <td><button class="dropbtn" id="button1" ><h4>crawford : {{alldata[13]}}</h4></button></td>
+                    </form> -->
+                </tr>
+            </table>
+    {%endif%}
+
+</body>
+</html>

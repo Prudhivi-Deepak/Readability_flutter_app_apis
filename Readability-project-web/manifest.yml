@@ -1,0 +1,5 @@
+---
+applications:
+ - name: Graphology_ibm_Deepak
+   random-route: true
+   memory: 128M
