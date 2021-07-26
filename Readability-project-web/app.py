@@ -1,19 +1,23 @@
 
 try:
     from flask import Flask, redirect, url_for, session,render_template,request
+    from cloudant.client import Cloudant
+    from cloudant.error import CloudantException
+    from cloudant.result import Result, ResultByKey
     from datetime import timedelta
     import textstat
     from authlib.integrations.flask_client import OAuth
     import json
+    import re
     from werkzeug.utils import secure_filename
     from werkzeug import secure_filename
     import time
-    import os
     from flask_mysqldb import MySQL
     import random
     from datetime import date,datetime
     import urllib
     import hashlib
+    import os
 except Exception as e:
     print("Some Modules are Missing : {} ".format(e))
 
@@ -24,6 +28,10 @@ app = Flask(__name__)
 # ====================Change me  =======================================
 global client_id
 global client_secret
+global client
+
+client = Cloudant.iam("e9a1474d-2a68-4b11-b60c-a60c87c061a9-bluemix","oUFFwB9qB-SghbaQbaj7y7TSu7N4yS3mWrDdyYHxtjJn",connect=True)
+client.connect()
 
 client_id = "778520672114-0nnem7bqng6l8u0o1vs08onno2k8hngd.apps.googleusercontent.com"
 client_secret = "v8kyQb4VhO5ZqMFAfsctwjF4"
@@ -96,8 +104,20 @@ def logout():
 @app.route('/')
 def hello_world():
     flag,user,email = isLoggedIN()
+    textarea1=""
     print(flag,user,email)
-    return render_template("Index1.html", flag=flag, user=user,msg1=0)
+    if(flag==True):
+        flag2=1
+    else:
+        flag2=0
+    return render_template("index2.html", flag=flag, user=user,msg1=0,flag2=flag2,textarea1=textarea1)
+
+@app.route('/test',methods=["POST","GET"])
+def test():
+    if request.method=="POST":
+        flag,user,email = isLoggedIN()
+        print(flag,user,email)
+        return render_template("test.html", flag=flag, user=user,msg1=0)
 
 
 #================================History==========================================================================================================
@@ -105,16 +125,20 @@ def hello_world():
 @app.route('/history2/<dateurl>',methods=["POST","GET"])
 def histroy2(dateurl):
     msg=""
-    cursor1 = mysql.connection.cursor()
-    res11 = cursor1.execute("SELECT * FROM predict1 WHERE time2 = %s",[dateurl])
-    alldata = cursor1.fetchall()
-    if(len(alldata)==0):
-        return  render_template("admin1.html",flag=0,msg=str(date)+" Date Haven't used Our website")
-    list1=[]
+    if "datar" in client:
+        db = client["datar"]
+    else:
+        db = client.create_database("datar")
 
-    print("---------------------------------------------------------------------------------------------------------")
-    print(alldata[0][5:])
-    return render_template("history3.html",flag=1,alldata=alldata[0][5:],input=alldata[0][4])
+    result = Result(db.all_docs, include_docs=True)
+    # print(result,list(result))
+
+    for i in list(result):
+        if i['doc']['dateurl']==dateurl:
+            i1=i['doc']
+    print(i1)
+    return render_template("history3.html",flag=1,alldata=i1['scores'],input=i1['text_iput_before'],input1=i1['text_iput_after'])
+
 
 
 
@@ -122,22 +146,24 @@ def histroy2(dateurl):
 @app.route('/history1/<email11>',methods=["POST","GET"])
 def histroy1(email11):
     msg=""
-    cursor1 = mysql.connection.cursor()
-    res11 = cursor1.execute("SELECT * FROM predict1 WHERE email = %s",[email11])
-    alldata = cursor1.fetchall()
-    print(alldata)
-    if(len(alldata)==0):
-        return  render_template("admin1.html",flag=0,msg=str(session["email"])+" Email Address Haven't used Our website for  image")
+
+    if "datar" in client:
+        db = client["datar"]
+    else:
+        db = client.create_database("datar")
+
+    result = Result(db.all_docs, include_docs=True)
+    # print(result,list(result))
     dates=[]
     dupdate=[]
-    list1=[]
-    for i in alldata:
-        if(i[1] not in dates):
-            dates.append(i[1])
-            dupdate.append(i[2])
-        print(i)
-    print(dates)
-    # print(alldata[0][0],alldata[0][1],alldata[0][2],alldata[0][3],alldata[0][4])#id , email , input , output1 , output2 , info.
+    for i in list(result):
+        if i['doc']['email']==email11 and  i['doc']['date'] not in dates:
+            dates.append(i['doc']['date'])
+            dupdate.append(i['doc']['dateurl'])
+    
+    print(dupdate)
+
+   
     return render_template("history1.html",flag=1,dates=dates,dupdate=dupdate,length1=range(len(dates)))
 
 
@@ -146,28 +172,32 @@ def histroy1(email11):
 @app.route('/history',methods=["POST","GET"])
 def histroy():
     flag,user,email = isLoggedIN()
-    print(email)
     msg=""
-    cursor1 = mysql.connection.cursor()
-    res1 = cursor1.execute('SELECT * FROM predict1 WHERE email = %s',[email])
-    print(res1)
-    alldata = cursor1.fetchall()
-    print(alldata)
-    if(len(alldata)==0):
-        return  render_template("admin1.html",flag=0,msg=str(email)+" Email Address Haven't used Our website for  image")
+    if "datar" in client:
+        db = client["datar"]
+    else:
+        db = client.create_database("datar")
+
+    result = Result(db.all_docs, include_docs=True)
     emails=[]
-    mysql.connection.commit()
-    for i in alldata:
-        if i[3] not in emails:
-            emails.append(i[3])
+    for i in list(result):
+        if i['doc']['email'] not in emails:
+            emails.append(i['doc']['email'])
+    
     print(emails)
+
     return render_template("history.html",flag=1,emails=emails)
 
 #========================main================================================================================================================
 @app.route('/main1',methods=['POST','GET'])
 def index():
     flag,user,email = isLoggedIN()
-    list1=[]
+    textarea1=""
+    if flag==True:
+        flag2=1
+    else:
+        flag2=0
+    list11=[]
     if request.method=='POST' and flag:
         today = date.today()
         d1 = today.strftime("%d/%m/%Y")
@@ -175,36 +205,79 @@ def index():
 
         d11 = today.strftime("%d_%m_%Y")
         d22 = datetime.now().strftime("%H_%M_%S")
-
+        pattern = r">[\w_ ,-.:'\"&;]+<"
 
         test_data = request.form["text_value"]
-        list1=[
-        textstat.text_standard(test_data),
-        textstat.automated_readability_index(test_data),
-        textstat.coleman_liau_index(test_data),
+        list3=re.findall(pattern,test_data)
+        list4=[]
+        for i in list3:
+            list4.append(i.strip("><"))
+        print(list3)
+        string_data=" ".join(list4)
 
-        textstat.crawford(test_data),
-        textstat.dale_chall_readability_score(test_data),
-        textstat.difficult_words(test_data),
 
-        textstat.fernandez_huerta(test_data),
-        textstat.flesch_kincaid_grade(test_data),
-        textstat.flesch_reading_ease(test_data),
+        list11=[
+        textstat.text_standard(string_data),
+        textstat.automated_readability_index(string_data),
+        textstat.coleman_liau_index(string_data),
 
-        textstat.gunning_fog(test_data),
-        textstat.gutierrez_polini(test_data),
-        textstat.linsear_write_formula(test_data),
+        textstat.crawford(string_data),
+        textstat.dale_chall_readability_score(string_data),
+        textstat.difficult_words(string_data),
 
-        textstat.smog_index(test_data),
-        textstat.szigriszt_pazos(test_data)     
+        textstat.fernandez_huerta(string_data),
+        textstat.flesch_kincaid_grade(string_data),
+        textstat.flesch_reading_ease(string_data),
+
+        textstat.gunning_fog(string_data),
+        textstat.gutierrez_polini(string_data),
+        textstat.linsear_write_formula(string_data),
+
+        textstat.smog_index(string_data),
+        textstat.szigriszt_pazos(string_data)     
         ]
+        pattern = r">[\w_ ,-.:'\"&;]+<"
+        h1 = r"<h1.*>[\w_ ,-.:'\"?].+</h1>"
+        h2 = r"<h2.*>[\w_ ,-.:;'\"?</>]+[^</h2>.+]</h2>"
+        h3 = r"<h3.*>[\w_ ,-.:'\"?].+[^</h3>.+]</h3>"
+        h4 = r"<h4.*>[\w_ ,-.:'\"?].+[^</h4>.+]</h4>"
+        h5 = r"<h5.*>[\w_ ,-.:'\"?].+[^</h5>.+]</h5>"
+        h6 = r"<h6.*>[\w_ ,-.:'\"?].+[^</h6>.+]</h6>"
+        h7 = r"<h7.*>[\w_ ,-.:'\"?].+[^</h7>.+]</h7>"
+        p = r"<p.*>[\w_ ,-.:'\"?].+[^</p>.+]</p>"
+        list1=test_data.split("<")
+        list2=[]
+        for i in list1:
+            if(i !=""):
+                if i[0:2] in ["h1","h2","h3","h4","h5","h6","h7"]:
+                    i=i.replace(i[i.index('>'):],'><span style="background-color: rgb(77, 255, 0);"><font color="#cc3333"'+i[i.index('>'):]+'</span></font>')              
+            list2.append(i)
 
-        print(test_data,list1,d1+" "+d2,d11+d22)    
-        cursor = mysql.connection.cursor()
-        cursor.execute('INSERT INTO predict1 VALUES (NULL,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',[d1+" "+d2,d11+d22,email,test_data,list1[0],list1[1],list1[2],list1[3],list1[4],list1[5],list1[6],list1[7],list1[8],list1[9]
-        ,list1[10],list1[11],list1[12],list1[13]])
-        mysql.connection.commit()
-    return render_template("Index1.html",msg1=list1,flag=flag, user=user)
+        textarea1 = '<'.join(list2)
+        print(textarea1)
+
+        if "datar" in client:
+            db = client["datar"]
+        else:
+            db = client.create_database("datar")
+
+        today = date.today()
+        d1 = today.strftime("%d/%m/%Y")
+        d2 = datetime.now().strftime("%H:%M:%S")
+
+        d11 = today.strftime("%d_%m_%Y")
+        d22 = datetime.now().strftime("%H_%M_%S")
+        
+        input_data = {"email":email,
+                "text_iput_before":str(test_data),
+                "text_iput_after":str(textarea1),
+                "scores":list11,
+                "date":d1+" "+d2,
+                "dateurl":d11+d22
+            }
+        print(input_data)
+        db.create_document(input_data)
+    return render_template("index2.html",msg1=list11,flag=flag, user=user,flag2=flag2,textarea1=textarea1)
 
 @app.route('/towards/<name>',methods=['POST','GET'])
 def main1(name):
@@ -273,9 +346,10 @@ def main1(name):
                             ,"smog.png"
                             ]; 
     print(str([names[names.index(name)],textinfo[index1],formulas[index1],ref[index1],images[index1]]))
-    cursor = mysql.connection.cursor()
-    cursor.execute('insert into upload (email , time , text_input) values (?,?,?)',[user,datetime,text1])
-    response = cursor.fetchall()
+
+    # cursor = mysql.connection.cursor()
+    # cursor.execute('insert into upload (email , time , text_input) values (?,?,?)',[user,datetime,text1])
+    # response = cursor.fetchall()
 
     return redirect(url_for(ref[index1]))
 
@@ -283,7 +357,7 @@ def main1(name):
 def home():
     return redirect('/')
 
-#=============================canvas=========================================================================================================
+#=============================admin=========================================================================================================
 
 @app.route('/admin')
 def admin():
@@ -293,59 +367,57 @@ def admin():
 @app.route('/adminh3/<dateurl>',methods=["POST","GET"])
 def adminh3(dateurl):
     msg=""
-    cursor1 = mysql.connection.cursor()
-    res1 = cursor1.execute('SELECT * FROM predict1 WHERE time2 = %s',[dateurl])
-    alldata = cursor1.fetchall()
-    if(len(alldata)==0):
-        return  render_template("admin1.html",flag=0,msg=str(date)+" Date Haven't used Our website")
-    newlist=[]
-    dates=[]
-    list1=[]
-    return render_template("admin1.html",flag=1,alldata=alldata[0][5:],input=alldata[0][4])
+    if "datar" in client:
+        db = client["datar"]
+    else:
+        db = client.create_database("datar")
 
+    result = Result(db.all_docs, include_docs=True)
+    for i in list(result):
+        if i['doc']['dateurl']==dateurl:
+            i1=i['doc']
+    print(i1)
+    
+    return render_template("admin1.html",flag=1,alldata=i1['scores'],input=i1['text_iput_before'],input1=i1['text_iput_after'])
 
 
 @app.route('/adminh2/<email11>',methods=["POST","GET"])
 def adminh2(email11):
     msg=""
-    cursor1 = mysql.connection.cursor()
-    res1 = cursor1.execute('SELECT * FROM predict1 WHERE email = %s',[email11])
-    alldata = cursor1.fetchall()
-    if(len(alldata)==0):
-        return  render_template("admin1.html",flag=0,msg=str(session["email"])+" Email Address Haven't used Our website for  image")
+
+    if "datar" in client:
+        db = client["datar"]
+    else:
+        db = client.create_database("datar")
+
+    result = Result(db.all_docs, include_docs=True)
+    # print(result,list(result))
     dates=[]
     dupdate=[]
-    list1=[]
-    for i in alldata:
-        if(i[1] not in dates):
-            dates.append(i[1])
-            dupdate.append(i[2])
-        print(i)
-    print(dates)
-    # print(alldata[0][0],alldata[0][1],alldata[0][2],alldata[0][3],alldata[0][4])#id , email , input , output1 , output2 , info.
+    for i in list(result):
+        if i['doc']['email']==email11 and  i['doc']['date'] not in dates:
+            dates.append(i['doc']['date'])
+            dupdate.append(i['doc']['dateurl'])
+
     return render_template("adminh2.html",flag=1,dates=dates,dupdate=dupdate,length1=range(len(dates)))
 
 
 @app.route('/admin11',methods=["POST","GET"])
 def admin11():
     msg=""
+    emails=[]
     try:
-        cursor1 = mysql.connection.cursor()
-        res1 = cursor1.execute('SELECT * FROM predict1')
-        alldata = cursor1.fetchall()
-        list1=[]
-        emails=[]
-        print("---------------------------------------------------------------------------------------------------------")
+        if "datar" in client:
+            db = client["datar"]
+        else:
+            db = client.create_database("datar")
+        result = Result(db.all_docs, include_docs=True)
+        for i in list(result):
+            if i['doc']['email'] not in emails:
+                emails.append(i['doc']['email'])
     except:
-        # print("exception")
         msgs = "An Exception Occured"
         return render_template("admin.html",msgs=msgs)
-    emails=[]
-    mysql.connection.commit()
-    for i in alldata:
-        if i[3] not in emails:
-            emails.append(i[3])
-    print(emails)
     return render_template("adminh.html",flag=1,emails=emails)
 
 
@@ -361,11 +433,16 @@ def admin1():
         pass1=request.form['password']
         if(str(email1)=="root@gmail.com" and str(pass1)=="root"):
             try:
-                cursor1 = mysql.connection.cursor()
-                res1 = cursor1.execute('SELECT * FROM predict1')
-                alldata = cursor1.fetchall()
-                list1=[]
+                if "data" in client:
+                    db = client["datar"]
+                else:
+                    db = client.create_database("datar")
+                result = Result(db.all_docs, include_docs=True)
+                # print(result,list(result))
                 emails=[]
+                for i in list(result):
+                    if i['doc']['email'] not in emails:
+                        emails.append(i['doc']['email'])
             except:
                 # print("exception")
                 msgs = "An Exception Occured"
@@ -374,17 +451,7 @@ def admin1():
             msgs="Wrong Credentials"
             print(msgs)
             return render_template("admin.html",msgs=msgs)
-        emails=[]
-    mysql.connection.commit()
-    for i in alldata:
-        if i[3] not in emails:
-            emails.append(i[3])
-    print(emails)
     return render_template("adminh.html",flag=1,emails=emails)
-
-@app.route('/admin2',methods=["POST","GET"])
-def admin2():
-    return render_template("admin1.html",flag=0)
 
 
 @app.route('/admin22',methods=["POST","GET"])
@@ -421,7 +488,6 @@ def admin22():
         print("---------------------------------------------------------------------------------------------------------")
         for i in newlist:
             print(i)
-        # print(alldata[0][0],alldata[0][1],alldata[0][2],alldata[0][3],alldata[0][4])#id , email , input , output1 , output2 , info.
     return render_template("admin1.html",flag=1,alldata=newlist,length1=range(len(newlist[0][1])))
 
 
@@ -454,15 +520,12 @@ def admin3():
         i2[5]=i2[5][3:-3]
 
         newlist.append([i1,i2])
-    # print("---------------------------------------------------------------------------------------------------------")
-
-    # print(alldata[0][0],alldata[0][1],alldata[0][2],alldata[0][3],alldata[0][4])#id , email , input , output1 , output2 , info.
     return render_template("admin1.html",flag=1,alldata=newlist,length1=range(len(newlist[0][1])))
 
 port = int(os.getenv('PORT', 8080))
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=port, debug=True)
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', port=port, debug=True)
 
-# if __name__ == "__main__":
-#     app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)
